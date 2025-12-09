@@ -1,10 +1,11 @@
 NAMA ANGGOTA KELOMPOK:
-1.	YOLANDA NESTI PUTRI WULANDARI	: 09030282327010
-2.	LIA MAHARANI				: 09030282327013
+1.	YOLANDA NESTI P.W: 09030282327010
+2.	LIA MAHARANI: 09030282327013
 
 Judul	:  * Lampu Taman Otomatis Berdasarkan Intensitas Cahaya Berbasis Arduino dan Sensor LDR*
 
 Deskripsi Projek : Proyek ini membuat sistem lampu taman otomatis yang menyalakan atau mematikan lampu berdasarkan intensitas cahaya lingkungan. Sistem memanfaatkan sensor LDR (Light Dependent Resistor) yang terhubung ke input analog Arduino untuk membaca level cahaya. Ketika intensitas cahaya turun di bawah ambang tertentu (keadaan gelap), sistem menyalakan lampu melalui sebuah relay. Ketika cukup terang, relay memutus dan lampu mati.
+
 Fitur utama:
 •	Pembacaan intensitas cahaya real-time menggunakan LDR.
 •	Kontrol lampu dengan relay.
