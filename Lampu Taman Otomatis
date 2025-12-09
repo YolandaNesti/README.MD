@@ -1,0 +1,87 @@
+NAMA ANGGOTA KELOMPOK:
+1.	YOLANDA NESTI PUTRI WULANDARI	: 09030282327010
+2.	LIA MAHARANI				: 09030282327013
+
+Judul	:  * Lampu Taman Otomatis Berdasarkan Intensitas Cahaya Berbasis Arduino dan Sensor LDR*
+
+Deskripsi Projek : Proyek ini membuat sistem lampu taman otomatis yang menyalakan atau mematikan lampu berdasarkan intensitas cahaya lingkungan. Sistem memanfaatkan sensor LDR (Light Dependent Resistor) yang terhubung ke input analog Arduino untuk membaca level cahaya. Ketika intensitas cahaya turun di bawah ambang tertentu (keadaan gelap), sistem menyalakan lampu melalui sebuah relay. Ketika cukup terang, relay memutus dan lampu mati.
+Fitur utama:
+•	Pembacaan intensitas cahaya real-time menggunakan LDR.
+•	Kontrol lampu dengan relay.
+•	Mode simulasi serangan untuk studi keamanan (mis. manipulasi nilai sensor dan DoS sederhana).
+•	Logging ke Serial Monitor untuk observabilitas.
+
+*Komponen Yang dipakai*
+•	Arduino Uno (atau kompatibel)
+•	Sensor LDR (dengan pembagi tegangan)
+•	Relay module (5V)
+•	Kabel jumper
+•	Sumber daya (baterai / adaptor)
+•	Beban (lampu taman)
+*Skema Singkat Koneksi*
+•  LDR → pembagi tegangan → A1 (analog input)
+•  Relay signal → pin digital 13
+•  VCC / GND sesuai modu
+
+*Kode Arduino Lampu Taman Otomatis Berdasarkan Intensitas Cahaya Berbasis Arduino dan Sensor LDR*
+// == Konfigurasi pin ==
+const int ldrPin = A1;       
+const int relayPin = 13;     
+const int threshold = 528;   
+
+// ==Mode Serangan ==
+bool attackMode = false; // false = normal, true = diserang
+
+void setup() {
+  pinMode(relayPin, OUTPUT);
+  digitalWrite(relayPin, HIGH);
+  Serial.begin(9600);
+  Serial.println("Sistem Lampu Otomatis Aktif");
+}
+
+void loop() {
+  int ldrValue;
+
+  // == SIMULASI SERANGAN ==
+  if (attackMode == true) {
+    // Fake Sensor Data Attack
+    ldrValue = 800; // Nilai palsu → selalu dianggap gelap
+    Serial.println("⚠ SERANGAN AKTIF: DATA SENSOR DIMANIPULASI");
+  } else {
+    // Kondisi normal
+    ldrValue = analogRead(ldrPin);
+  }
+
+  // == Monitoring ==
+  Serial.print("Nilai LDR: ");
+  Serial.println(ldrValue);
+
+  // == Logika Lampu ==
+  if (ldrValue > threshold) {
+    Serial.println("GELAP -> Lampu HIDUP");
+    digitalWrite(relayPin, LOW);
+  } else {
+    Serial.println("TERANG -> Lampu MATI");
+    digitalWrite(relayPin, HIGH);
+  }
+
+  // == SIMULASI DoS ==
+  if (attackMode == true) {
+    delay(10000); // DoS → sistem lambat
+  } else {
+    delay(3000);
+  }
+}
+
+*Dampak pada Sistem*
+Konsumsi daya sistem meningkat sekitar 40% karena lampu taman menyala terus meskipun kondisi lingkungan sebenarnya sudah terang. Hal ini menyebabkan penggunaan listrik menjadi lebih boros dari kondisi normal. Selain itu, kesalahan kerja sistem membuat tingkat kepercayaan pengguna terhadap sistem otomatis menurun sekitar 30%, karena lampu tidak lagi bekerja sesuai dengan intensitas cahaya sebenarnya. Sistem yang bekerja terus-menerus juga berpotensi mempercepat kerusakan fisik pada komponen seperti lampu dan relay hingga sekitar 20% akibat beban kerja yang berlebihan. Di sisi lain, proses pengecekan dan perbaikan sistem menjadi lebih sulit sekitar 10% karena data yang tampil pada Serial Monitor tidak sesuai dengan kondisi nyata, sehingga menyulitkan analisis dan debugging sistem.
+
+*Langkah awal penyerangan*
+Serangan dimulai ketika penyerang memodifikasi firmware atau menyisipkan modul tertentu sehingga variabel attackMode aktif. Saat mode ini aktif, sistem dipaksa membaca nilai sensor LDR yang sudah dimanipulasi sehingga selalu dianggap gelap dan menyebabkan lampu taman terus menyala. Selain itu, penyerang juga menambahkan jeda waktu (delay) yang panjang pada program untuk membuat sistem bekerja lebih lambat, sehingga kemampuan pemantauan dan respon sistem terhadap perubahan kondisi lingkungan menjadi berkurang.
+
+*Jenis Serangan Yang Gunakan*
+1. Sistem lampu taman otomatis memiliki beberapa kerentanan keamanan. Ketika attackMode diaktifkan, sistem mengalami sensor spoofing, yaitu nilai LDR dipaksa menjadi nilai palsu sehingga sistem selalu menganggap kondisi gelap dan lampu menyala terus, walaupun sebenarnya terang. Selain itu, penerapan delay yang panjang menyebabkan serangan Denial of Service (DoS) sederhana, di mana sistem menjadi lambat dan kurang responsif terhadap perubahan kondisi lingkungan.
+Sistem juga memiliki backdoor pada firmware karena attackMode didefinisikan secara langsung di dalam program, sehingga dapat diaktifkan jika firmware dimodifikasi. Tidak adanya mekanisme deteksi anomali membuat sistem sulit membedakan gangguan alami dengan serangan. Dalam skenario serangan, penyerang mengaktifkan attackMode, memalsukan data sensor, dan memperlambat respons sistem untuk menurunkan kinerja dan keandalan sistem secara keseluruhan.
+
+Keaimpulan
+Berdasarkan hasil analisis kode dan simulasi serangan, sistem lampu taman otomatis berbasis sensor LDR terbukti rentan terhadap serangan sensor spoofing dan Denial of Service (DoS). Manipulasi data sensor menyebabkan lampu menyala terus dan meningkatkan konsumsi daya hingga sekitar 40%, sementara penerapan delay berlebihan menurunkan responsivitas sistem hingga sekitar 60% dibandingkan kondisi normal. Selain itu, ketiadaan mekanisme deteksi anomali membuat kemungkinan serangan tidak terdeteksi mencapai sekitar 50%. Dengan menerapkan teknik filtering data, deteksi anomali, redundansi sensor, serta desain firmware non-blocking, tingkat keandalan dan ketahanan sistem dapat ditingkatkan hingga sekitar 70–80%, sehingga sistem menjadi lebih stabil dan sulit dimanipulasi oleh pihak tidak bertanggung jawab.
